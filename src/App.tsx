@@ -3,8 +3,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { GlobalStyle } from './common/GlobalStyle';
 import './App.css';
 import Home from './pages/Home';
-import Detail from './pages/Detail';
 import Header from './components/Header/Header';
+import TopicDetail from './pages/TopicDetail';
 
 const App = () => {
   return (
@@ -14,7 +14,7 @@ const App = () => {
         <Header />
         <Routes>
           <Route path='/' element={<Home />} />
-          <Route path='/:id' element={<Detail />} />
+          <Route path='/topics/:id' element={<TopicDetail />} />
         </Routes>
       </BrowserRouter>
     </>
