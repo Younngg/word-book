@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { wordSlice } from './wordSlice';
+import { wordSlice } from './words';
+import { topicSlice } from './topics';
 
 export const store = configureStore({
   reducer: {
     wordSlice: wordSlice.reducer,
+    topicSlice: topicSlice.reducer,
   },
 });
 
