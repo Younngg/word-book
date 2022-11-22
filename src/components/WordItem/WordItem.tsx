@@ -14,6 +14,8 @@ interface WordItemProps {
 
 const WordItem: React.FC<WordItemProps> = ({ word }) => {
   const [isCompleted, setIsCompleted] = useState(word.status);
+  const [isShownMean, setIsShownMean] = useState(false);
+
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -21,8 +23,12 @@ const WordItem: React.FC<WordItemProps> = ({ word }) => {
   }, [dispatch, isCompleted, word.id]);
 
   const handleClickComplete = () => {
-    isCompleted ? setIsCompleted(false) : setIsCompleted(true);
+    setIsCompleted(isCompleted ? false : true);
     dispatch(updateWordStatus({ id: word.id, status: isCompleted }));
+  };
+
+  const handleShowMean = () => {
+    setIsShownMean(isShownMean ? false : true);
   };
 
   const handleDelete = (id: number) => {
@@ -33,7 +39,12 @@ const WordItem: React.FC<WordItemProps> = ({ word }) => {
     <Li>
       <WordContainer>
         <p className='word'>{word.word}</p>
-        <p className='mean'>{word.mean}</p>
+        <p
+          className={isShownMean ? 'mean' : 'mean hidden'}
+          onClick={handleShowMean}
+        >
+          {word.mean}
+        </p>
       </WordContainer>
       <ButtonContainer>
         <CompleteButton
@@ -70,6 +81,8 @@ const Li = styled.li`
   padding: 1.5rem;
   margin-bottom: 1rem;
   display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   font-size: 20px;
   &:hover {
     box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
@@ -81,16 +94,31 @@ const Li = styled.li`
   }
   .mean {
     font-size: 18px;
+    width: fit-content;
+    transition: all 0.1s;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    &.hidden {
+      background-color: #ddd;
+      color: #ddd;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -khtml-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
   }
 `;
 
 const WordContainer = styled.div`
-  align-self: center;
+  //align-self: center;
 `;
 
 const ButtonContainer = styled.div`
   align-self: flex-end;
-  margin-left: auto;
 `;
 
 const CompleteButton = styled.button<{ isCompleted: boolean }>`
