@@ -20,10 +20,9 @@ const Home = () => {
     }
   };
 
-  console.log(topics);
-
   return (
     <Container>
+      <h2>Topics</h2>
       <Form onSubmit={handleSubmit}>
         <input type='text' ref={topicRef} placeholder='topic' />
         <button>Add</button>

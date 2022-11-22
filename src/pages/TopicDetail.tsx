@@ -4,8 +4,6 @@ import WordList from './../components/WordList/WordList';
 
 const TopicDetail = () => {
   const location = useLocation();
-  console.log(location.state);
-
   const topicName = location.state.name;
 
   return (

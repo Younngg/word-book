@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { ComponentProps } from 'react';
 import { useRef } from 'react';
 import { useAppSelector } from '../../store/hooks';
-import { addWord, removeWord } from '../../store/words';
+import { addWord } from '../../store/words';
 import { useAppDispatch } from './../../store/hooks';
 import WordItem from './../WordItem/WordItem';
 
@@ -29,15 +29,12 @@ const WordList: React.FC<WordListProps> = ({ topic }) => {
           word: wordRef.current.value,
           mean: meanRef.current.value,
           id: Date.now(),
+          status: false,
         })
       );
       wordRef.current.value = '';
       meanRef.current.value = '';
     }
-  };
-
-  const handleDelete = (id: number) => {
-    dispatch(removeWord(id));
   };
 
   return (
@@ -50,9 +47,7 @@ const WordList: React.FC<WordListProps> = ({ topic }) => {
       </Form>
       <Ul>
         {words.map((word) => {
-          return (
-            <WordItem key={word.id} word={word} handleDelete={handleDelete} />
-          );
+          return <WordItem key={word.id} word={word} />;
         })}
       </Ul>
     </Container>
@@ -94,4 +89,7 @@ const Form = styled.form`
 const Ul = styled.ul`
   width: 90%;
   margin-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
 `;

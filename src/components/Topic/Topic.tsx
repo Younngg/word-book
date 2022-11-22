@@ -17,7 +17,6 @@ const Topic: React.FC<TopicProps> = ({ name, id }) => {
 
   const handleDelete = (id: number) => {
     dispatch(removeTopic(id));
-    console.log(id);
   };
 
   return (
@@ -39,7 +38,6 @@ const Li = styled.li`
   border: 1px solid #ddd;
   border-radius: 5px;
   padding: 1rem;
-  font-size: 20px;
   margin-bottom: 1rem;
   display: flex;
   justify-content: space-between;
@@ -50,6 +48,7 @@ const Li = styled.li`
 `;
 
 const TopicTitle = styled.div`
+  font-size: 20px;
   &:hover {
     color: #00b894;
     text-decoration: underline;
