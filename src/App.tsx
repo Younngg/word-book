@@ -9,13 +9,13 @@ import Snackbar from './components/common/Snackbar';
 
 interface SnackbarObj {
   message: string;
-  isShown: boolean;
+  isShowing: boolean;
 }
 
 const App = () => {
   const [snackbar, setSnackbar] = useState<SnackbarObj>({
     message: '',
-    isShown: false,
+    isShowing: false,
   });
 
   console.log(snackbar);
@@ -30,8 +30,9 @@ const App = () => {
           <Route path='/topics/:id' element={<TopicDetail />} />
         </Routes>
       </BrowserRouter>
-      {snackbar.isShown && (
+      {snackbar.isShowing && (
         <Snackbar
+          key={Date.now()}
           message={snackbar.message}
           setSnackbar={setSnackbar}
           snackbar={snackbar}

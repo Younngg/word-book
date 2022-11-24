@@ -7,7 +7,9 @@ import { useAppDispatch, useAppSelector } from './../../store/hooks';
 interface TopicProps {
   name: string;
   id: number;
-  setSnackbar: Dispatch<SetStateAction<{ message: string; isShown: boolean }>>;
+  setSnackbar: Dispatch<
+    SetStateAction<{ message: string; isShowing: boolean }>
+  >;
 }
 
 const Topic: React.FC<TopicProps> = ({ name, id }) => {

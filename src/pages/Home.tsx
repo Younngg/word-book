@@ -6,7 +6,9 @@ import Topic from './../components/Topic/Topic';
 import { useAppDispatch } from './../store/hooks';
 
 interface HomeProps {
-  setSnackbar: Dispatch<SetStateAction<{ message: string; isShown: boolean }>>;
+  setSnackbar: Dispatch<
+    SetStateAction<{ message: string; isShowing: boolean }>
+  >;
 }
 
 const Home: React.FC<HomeProps> = ({ setSnackbar }) => {
@@ -25,7 +27,7 @@ const Home: React.FC<HomeProps> = ({ setSnackbar }) => {
       dispatch(addTopic({ topic, id }));
       topicRef.current.value = '';
       setSnackbar(() => {
-        return { message: `${topic}`, isShown: true };
+        return { message: `${topic}`, isShowing: true };
       });
     }
   };

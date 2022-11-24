@@ -5,29 +5,27 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 
 interface SnackbarProps {
   message: string;
-  setSnackbar: Dispatch<SetStateAction<{ message: string; isShown: boolean }>>;
-  snackbar: { message: string; isShown: boolean };
+  setSnackbar: Dispatch<
+    SetStateAction<{ message: string; isShowing: boolean }>
+  >;
+  snackbar: { message: string; isShowing: boolean };
 }
 
-const Snackbar: React.FC<SnackbarProps> = ({
-  message,
-  setSnackbar,
-  snackbar,
-}) => {
+const Snackbar: React.FC<SnackbarProps> = ({ message, setSnackbar }) => {
   const [isShowing, setIsShowing] = useState(true);
   const timer = setTimeout(() => {
-    setSnackbar((current) => {
-      return { ...current, isShown: false };
-    });
+    setIsShowing(false);
+    setSnackbar({ message: '', isShowing: false });
   }, 5000);
+
   useEffect(() => {
-    clearTimeout(timer);
-  }, [timer]);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [isShowing]);
 
   const handleClickClose = () => {
-    setSnackbar((current) => {
-      return { ...current, isShown: false };
-    });
+    setSnackbar({ message: '', isShowing: false });
   };
 
   return (
