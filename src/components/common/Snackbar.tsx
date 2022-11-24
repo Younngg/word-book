@@ -1,13 +1,39 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 
-const Snackbar = () => {
+interface SnackbarProps {
+  message: string;
+  setSnackbar: Dispatch<SetStateAction<{ message: string; isShown: boolean }>>;
+  snackbar: { message: string; isShown: boolean };
+}
+
+const Snackbar: React.FC<SnackbarProps> = ({
+  message,
+  setSnackbar,
+  snackbar,
+}) => {
+  const [isShowing, setIsShowing] = useState(true);
+  const timer = setTimeout(() => {
+    setSnackbar((current) => {
+      return { ...current, isShown: false };
+    });
+  }, 5000);
+  useEffect(() => {
+    clearTimeout(timer);
+  }, [timer]);
+
+  const handleClickClose = () => {
+    setSnackbar((current) => {
+      return { ...current, isShown: false };
+    });
+  };
+
   return (
     <Container>
-      <p>메시지입니다.</p>
-      <LodingBox>
+      <p>{message}</p>
+      <LodingBox onClick={handleClickClose}>
         <CloseButton>
           <FontAwesomeIcon icon={faXmark} size='lg' />
         </CloseButton>

@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 interface SnackbarState {
-  isShown: boolean;
   message: string;
+  id: number;
 }
 const initialTopicState: SnackbarState[] = [];
 
@@ -12,11 +12,12 @@ export const snackbarSlice = createSlice({
   reducers: {
     showSnackbar: (state, action) => {
       state.unshift({
-        isShown: action.payload.isShown,
         message: action.payload.message,
+        id: action.payload.id,
       });
     },
-    closeSnackbar: (state, action) => {},
+    closeSnackbar: (state, action) =>
+      state.filter((bar) => bar.id === action.payload),
   },
 });
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState, Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { removeTopic } from '../../store/topics';
@@ -7,14 +7,17 @@ import { useAppDispatch, useAppSelector } from './../../store/hooks';
 interface TopicProps {
   name: string;
   id: number;
+  setSnackbar: Dispatch<SetStateAction<{ message: string; isShown: boolean }>>;
 }
 
 const Topic: React.FC<TopicProps> = ({ name, id }) => {
   const words = useAppSelector((state) => state.wordSlice).filter(
     (word) => word.topic === name
   );
-  const memorizedWords = words.filter((word) => word.status === true);
+
   const dispatch = useAppDispatch();
+
+  const memorizedWords = words.filter((word) => word.status === true);
 
   const message = `전체 ${words.length} 개 중 ${memorizedWords.length}개 암기 완료`;
 

@@ -1,39 +1,57 @@
-import React, { useRef, ComponentProps } from 'react';
+import React, { useRef, ComponentProps, Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import { useAppSelector } from '../store/hooks';
 import { addTopic } from '../store/topics';
 import Topic from './../components/Topic/Topic';
 import { useAppDispatch } from './../store/hooks';
-import Snackbar from './../common/Snackbar';
 
-const Home = () => {
+interface HomeProps {
+  setSnackbar: Dispatch<SetStateAction<{ message: string; isShown: boolean }>>;
+}
+
+const Home: React.FC<HomeProps> = ({ setSnackbar }) => {
   const topics = useAppSelector((state) => state.topicSlice);
+
   const dispatch = useAppDispatch();
 
   const topicRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit: ComponentProps<'form'>['onSubmit'] = (e) => {
     e.preventDefault();
+
     if (topicRef.current) {
-      dispatch(addTopic({ topic: topicRef.current.value, id: Date.now() }));
+      const topic = topicRef.current.value;
+      const id = Date.now();
+      dispatch(addTopic({ topic, id }));
       topicRef.current.value = '';
+      setSnackbar(() => {
+        return { message: `${topic}`, isShown: true };
+      });
     }
   };
 
   return (
-    <Container>
-      <h2>Topics</h2>
-      <Form onSubmit={handleSubmit}>
-        <input type='text' ref={topicRef} placeholder='topic' />
-        <button>Add</button>
-      </Form>
-      <Ul>
-        {topics.map((topic) => {
-          return <Topic key={topic.id} name={topic.topic} id={topic.id} />;
-        })}
-      </Ul>
-      <Snackbar />
-    </Container>
+    <>
+      <Container>
+        <h2>Topics</h2>
+        <Form onSubmit={handleSubmit}>
+          <input type='text' ref={topicRef} placeholder='topic' required />
+          <button>Add</button>
+        </Form>
+        <Ul>
+          {topics.map((topic) => {
+            return (
+              <Topic
+                key={topic.id}
+                name={topic.topic}
+                id={topic.id}
+                setSnackbar={setSnackbar}
+              />
+            );
+          })}
+        </Ul>
+      </Container>
+    </>
   );
 };
 
