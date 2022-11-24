@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { GlobalStyle } from './components/common/GlobalStyle';
 import './App.css';
@@ -6,19 +6,10 @@ import Home from './pages/Home';
 import Header from './components/Header/Header';
 import TopicDetail from './pages/TopicDetail';
 import Snackbar from './components/common/Snackbar';
-
-interface SnackbarObj {
-  message: string;
-  isShowing: boolean;
-}
+import { useAppSelector } from './store/hooks';
 
 const App = () => {
-  const [snackbar, setSnackbar] = useState<SnackbarObj>({
-    message: '',
-    isShowing: false,
-  });
-
-  console.log(snackbar);
+  const snackbar = useAppSelector((state) => state.snackbarSlice);
 
   return (
     <>
@@ -26,19 +17,11 @@ const App = () => {
       <BrowserRouter>
         <Header />
         <Routes>
-          <Route path='/' element={<Home setSnackbar={setSnackbar} />} />
+          <Route path='/' element={<Home />} />
           <Route path='/topics/:id' element={<TopicDetail />} />
         </Routes>
       </BrowserRouter>
-      {snackbar.isShowing && (
-        <Snackbar
-          key={Date.now()}
-          message={snackbar.message}
-          setSnackbar={setSnackbar}
-          snackbar={snackbar}
-        />
-      )}
-      {}
+      {snackbar.isShowing && <Snackbar key={Date.now()} />}
     </>
   );
 };

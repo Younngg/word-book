@@ -1,24 +1,35 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-interface SnackbarState {
+export interface Snackbar {
   message: string;
-  id: number;
+  color: 'green' | 'red' | '';
+  isShowing: boolean;
 }
-const initialTopicState: SnackbarState[] = [];
+const initialSnackbarState: Snackbar = {
+  message: '',
+  color: 'green',
+  isShowing: false,
+};
 
 export const snackbarSlice = createSlice({
-  name: 'snackbar',
-  initialState: initialTopicState,
+  name: 'topic',
+  initialState: initialSnackbarState,
   reducers: {
     showSnackbar: (state, action) => {
-      state.unshift({
+      return {
         message: action.payload.message,
-        id: action.payload.id,
-      });
+        isShowing: true,
+        color: action.payload.color,
+      };
     },
-    closeSnackbar: (state, action) =>
-      state.filter((bar) => bar.id === action.payload),
+    hideSnackbar: (state) => {
+      return {
+        message: '',
+        isShowing: false,
+        color: '',
+      };
+    },
   },
 });
 
-export const { showSnackbar, closeSnackbar } = snackbarSlice.actions;
+export const { showSnackbar, hideSnackbar } = snackbarSlice.actions;

@@ -1,36 +1,30 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { useAppDispatch, useAppSelector } from './../../store/hooks';
+import { hideSnackbar } from '../../store/snackbar';
 
-interface SnackbarProps {
-  message: string;
-  setSnackbar: Dispatch<
-    SetStateAction<{ message: string; isShowing: boolean }>
-  >;
-  snackbar: { message: string; isShowing: boolean };
-}
-
-const Snackbar: React.FC<SnackbarProps> = ({ message, setSnackbar }) => {
+const Snackbar = () => {
   const [isShowing, setIsShowing] = useState(true);
+
+  const snackbar = useAppSelector((state) => state.snackbarSlice);
+  const dispatch = useAppDispatch();
+
   const timer = setTimeout(() => {
     setIsShowing(false);
-    setSnackbar({ message: '', isShowing: false });
-  }, 5000);
+    dispatch(hideSnackbar());
+  }, 3000);
 
   useEffect(() => {
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [isShowing]);
+    return () => clearTimeout(timer);
+  }, [isShowing, timer]);
 
-  const handleClickClose = () => {
-    setSnackbar({ message: '', isShowing: false });
-  };
+  const handleClickClose = () => dispatch(hideSnackbar());
 
   return (
-    <Container>
-      <p>{message}</p>
+    <Container bgColor={snackbar.color}>
+      <p>{snackbar.message}</p>
       <LodingBox onClick={handleClickClose}>
         <CloseButton>
           <FontAwesomeIcon icon={faXmark} size='lg' />
@@ -45,9 +39,18 @@ const Snackbar: React.FC<SnackbarProps> = ({ message, setSnackbar }) => {
 
 export default Snackbar;
 
-const Container = styled.div`
+const Container = styled.div<{ bgColor: string }>`
   padding: 0.8em 2em;
-  background-color: #00cecbbc;
+  background-color: ${({ bgColor }) => {
+    switch (bgColor) {
+      case 'green':
+        return '#00cecbb1';
+      case 'red':
+        return '#ff7675b1';
+      default:
+        return '#00cecbb1';
+    }
+  }};
   display: flex;
   align-items: center;
   color: #fff;
@@ -91,7 +94,7 @@ const LodingSpinner = styled.svg`
     stroke-width: 3px;
     stroke: white;
     fill: none;
-    animation: countdown 5s linear infinite forwards;
+    animation: countdown 3s linear infinite forwards;
   }
   @keyframes countdown {
     from {

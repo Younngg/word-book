@@ -6,6 +6,7 @@ import { useAppSelector } from '../../store/hooks';
 import { addWord } from '../../store/words';
 import { useAppDispatch } from './../../store/hooks';
 import WordItem from './../WordItem/WordItem';
+import { showSnackbar } from '../../store/snackbar';
 
 interface WordListProps {
   topic: string;
@@ -23,13 +24,20 @@ const WordList: React.FC<WordListProps> = ({ topic }) => {
   const handleSubmit: ComponentProps<'form'>['onSubmit'] = (e) => {
     e.preventDefault();
     if (wordRef.current && meanRef.current) {
+      const word = wordRef.current.value;
       dispatch(
         addWord({
           topic,
-          word: wordRef.current.value,
+          word,
           mean: meanRef.current.value,
           id: Date.now(),
           status: false,
+        })
+      );
+      dispatch(
+        showSnackbar({
+          message: `${word} 이(가) 추가되었습니다.`,
+          color: 'green',
         })
       );
       wordRef.current.value = '';

@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircle } from '@fortawesome/free-regular-svg-icons';
 import { faX } from '@fortawesome/free-solid-svg-icons';
 import { useAppDispatch } from './../../store/hooks';
-import { useState } from 'react';
 import { removeWord, updateWordStatus } from '../../store/words';
-import { useEffect } from 'react';
+import { showSnackbar } from '../../store/snackbar';
 
 interface WordItemProps {
   word: { word: string; mean: string; id: number; status: boolean };
@@ -33,6 +32,12 @@ const WordItem: React.FC<WordItemProps> = ({ word }) => {
 
   const handleDelete = (id: number) => {
     dispatch(removeWord(id));
+    dispatch(
+      showSnackbar({
+        message: `${word.word} 이(가) 삭제되었습니다.`,
+        color: 'red',
+      })
+    );
   };
 
   return (

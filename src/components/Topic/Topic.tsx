@@ -1,15 +1,13 @@
-import React, { useEffect, useState, Dispatch, SetStateAction } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { removeTopic } from '../../store/topics';
 import { useAppDispatch, useAppSelector } from './../../store/hooks';
+import { showSnackbar } from '../../store/snackbar';
 
 interface TopicProps {
   name: string;
   id: number;
-  setSnackbar: Dispatch<
-    SetStateAction<{ message: string; isShowing: boolean }>
-  >;
 }
 
 const Topic: React.FC<TopicProps> = ({ name, id }) => {
@@ -25,6 +23,13 @@ const Topic: React.FC<TopicProps> = ({ name, id }) => {
 
   const handleDelete = (id: number) => {
     dispatch(removeTopic(id));
+    dispatch(
+      showSnackbar({
+        message: `${name} 이(가) 삭제되었습니다.`,
+        isShowing: true,
+        color: 'red',
+      })
+    );
   };
 
   return (

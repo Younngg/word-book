@@ -1,17 +1,12 @@
-import React, { useRef, ComponentProps, Dispatch, SetStateAction } from 'react';
+import React, { useRef, ComponentProps } from 'react';
 import styled from 'styled-components';
 import { useAppSelector } from '../store/hooks';
 import { addTopic } from '../store/topics';
 import Topic from './../components/Topic/Topic';
 import { useAppDispatch } from './../store/hooks';
+import { showSnackbar } from '../store/snackbar';
 
-interface HomeProps {
-  setSnackbar: Dispatch<
-    SetStateAction<{ message: string; isShowing: boolean }>
-  >;
-}
-
-const Home: React.FC<HomeProps> = ({ setSnackbar }) => {
+const Home = () => {
   const topics = useAppSelector((state) => state.topicSlice);
 
   const dispatch = useAppDispatch();
@@ -24,11 +19,15 @@ const Home: React.FC<HomeProps> = ({ setSnackbar }) => {
     if (topicRef.current) {
       const topic = topicRef.current.value;
       const id = Date.now();
+
       dispatch(addTopic({ topic, id }));
+      dispatch(
+        showSnackbar({
+          message: `${topic} 이(가) 추가되었습니다.`,
+          color: 'green',
+        })
+      );
       topicRef.current.value = '';
-      setSnackbar(() => {
-        return { message: `${topic}`, isShowing: true };
-      });
     }
   };
 
@@ -42,14 +41,7 @@ const Home: React.FC<HomeProps> = ({ setSnackbar }) => {
         </Form>
         <Ul>
           {topics.map((topic) => {
-            return (
-              <Topic
-                key={topic.id}
-                name={topic.topic}
-                id={topic.id}
-                setSnackbar={setSnackbar}
-              />
-            );
+            return <Topic key={topic.id} name={topic.topic} id={topic.id} />;
           })}
         </Ul>
       </Container>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 import WordList from './../components/WordList/WordList';
