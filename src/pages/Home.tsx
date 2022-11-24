@@ -1,10 +1,10 @@
-import React from 'react';
-import { useRef, ComponentProps } from 'react';
+import React, { useRef, ComponentProps } from 'react';
 import styled from 'styled-components';
 import { useAppSelector } from '../store/hooks';
 import { addTopic } from '../store/topics';
 import Topic from './../components/Topic/Topic';
 import { useAppDispatch } from './../store/hooks';
+import Snackbar from './../common/Snackbar';
 
 const Home = () => {
   const topics = useAppSelector((state) => state.topicSlice);
@@ -32,6 +32,7 @@ const Home = () => {
           return <Topic key={topic.id} name={topic.topic} id={topic.id} />;
         })}
       </Ul>
+      <Snackbar />
     </Container>
   );
 };

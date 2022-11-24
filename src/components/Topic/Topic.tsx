@@ -13,22 +13,27 @@ const Topic: React.FC<TopicProps> = ({ name, id }) => {
   const words = useAppSelector((state) => state.wordSlice).filter(
     (word) => word.topic === name
   );
+  const memorizedWords = words.filter((word) => word.status === true);
   const dispatch = useAppDispatch();
+
+  const message = `전체 ${words.length} 개 중 ${memorizedWords.length}개 암기 완료`;
 
   const handleDelete = (id: number) => {
     dispatch(removeTopic(id));
   };
 
   return (
-    <Li>
-      <Link to={`/topics/${id}`} state={{ name, id }}>
-        <TopicTitle>{name}</TopicTitle>
-      </Link>
-      <div>
-        <span>단어 수 : {words.length}개</span>
-        <DeleteButton onClick={() => handleDelete(id)}>DEL</DeleteButton>
-      </div>
-    </Li>
+    <>
+      <Li>
+        <Link to={`/topics/${id}`} state={{ name, id }}>
+          <TopicTitle>{name}</TopicTitle>
+        </Link>
+        <div>
+          <span>{message}</span>
+          <DeleteButton onClick={() => handleDelete(id)}>DEL</DeleteButton>
+        </div>
+      </Li>
+    </>
   );
 };
 
@@ -41,6 +46,7 @@ const Li = styled.li`
   margin-bottom: 1rem;
   display: flex;
   justify-content: space-between;
+  position: relative;
 
   &:hover {
     box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
