@@ -1,13 +1,37 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
+import AuthService from './../../service/authService';
+
+const authService = new AuthService();
 
 const Header = () => {
+  const navigate = useNavigate();
+  const locationState = useLocation().state;
+
+  const [userId, setUserId] = useState(locationState && locationState.id);
+
+  const onLogout = () => {
+    authService.logout();
+  };
+
+  useEffect(() => {
+    authService.onAuthChange((user: any) => {
+      if (user) {
+        setUserId(user.uid);
+      } else {
+        setUserId(null);
+        navigate('/');
+      }
+    });
+  }, [userId, navigate]);
+
   return (
     <HeaderDiv>
       <Link to={'/'}>
         <Logo>단어장</Logo>
       </Link>
+      {userId && <button onClick={onLogout}>Logout</button>}
     </HeaderDiv>
   );
 };

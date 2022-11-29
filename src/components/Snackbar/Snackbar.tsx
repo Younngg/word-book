@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
-import { useAppDispatch, useAppSelector } from './../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { hideSnackbar } from '../../store/snackbar';
 
 const Snackbar = () => {
