@@ -1,37 +1,43 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import AuthService from './../../service/authService';
+import { useDispatch } from 'react-redux';
+import { loginUser, logoutUser } from '../../store/user';
+import { useAppSelector } from '../../store/hooks';
 
 const authService = new AuthService();
 
 const Header = () => {
   const navigate = useNavigate();
-  const locationState = useLocation().state;
 
-  const [userId, setUserId] = useState(locationState && locationState.id);
+  const dispatch = useDispatch();
+  const userId = useAppSelector((state) => state.userSlice);
+
+  console.log(userId.userId);
 
   const onLogout = () => {
     authService.logout();
+    dispatch(logoutUser());
   };
 
   useEffect(() => {
     authService.onAuthChange((user: any) => {
       if (user) {
-        setUserId(user.uid);
+        dispatch(loginUser(user.uid));
       } else {
-        setUserId(null);
+        dispatch(logoutUser());
         navigate('/');
       }
     });
-  }, [userId, navigate]);
+  }, [dispatch, navigate]);
 
   return (
     <HeaderDiv>
       <Link to={'/'}>
         <Logo>단어장</Logo>
       </Link>
-      {userId && <button onClick={onLogout}>Logout</button>}
+      {userId.userId && <button onClick={onLogout}>Logout</button>}
     </HeaderDiv>
   );
 };

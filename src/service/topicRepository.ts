@@ -20,8 +20,8 @@ class TopicRepository {
     set(ref(this.db, `${userId}/topics/${topic.id}`), topic);
   }
 
-  removeTopic(userId: string, topic: any) {
-    remove(ref(this.db, `${userId}/topics/${topic.id}`));
+  removeTopic(userId: string, id: any) {
+    remove(ref(this.db, `${userId}/topics/${id}`));
   }
 }
 

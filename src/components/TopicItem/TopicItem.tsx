@@ -2,18 +2,20 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { removeTopic } from '../../store/topics';
-import { useAppDispatch, useAppSelector } from './../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { showSnackbar } from '../../store/snackbar';
 
-interface TopicProps {
+interface TopicItemProps {
   name: string;
   id: number;
+  topicRepository: any;
 }
 
-const Topic: React.FC<TopicProps> = ({ name, id }) => {
+const TopicItem: React.FC<TopicItemProps> = ({ name, id, topicRepository }) => {
   const words = useAppSelector((state) => state.wordSlice).filter(
     (word) => word.topic === name
   );
+  const userId = useAppSelector((state) => state.userSlice.userId);
 
   const dispatch = useAppDispatch();
 
@@ -23,6 +25,7 @@ const Topic: React.FC<TopicProps> = ({ name, id }) => {
 
   const handleDelete = (id: number) => {
     dispatch(removeTopic(id));
+    topicRepository.removeTopic(userId, id);
     dispatch(
       showSnackbar({
         message: `${name} 이(가) 삭제되었습니다.`,
@@ -33,21 +36,19 @@ const Topic: React.FC<TopicProps> = ({ name, id }) => {
   };
 
   return (
-    <>
-      <Li>
-        <Link to={`/topics/${id}`} state={{ name, id }}>
-          <TopicTitle>{name}</TopicTitle>
-        </Link>
-        <div>
-          <span>{message}</span>
-          <DeleteButton onClick={() => handleDelete(id)}>DEL</DeleteButton>
-        </div>
-      </Li>
-    </>
+    <Li>
+      <Link to={`/topics/${id}`} state={{ name, id }}>
+        <TopicTitle>{name}</TopicTitle>
+      </Link>
+      <div>
+        <span>{message}</span>
+        <DeleteButton onClick={() => handleDelete(id)}>DEL</DeleteButton>
+      </div>
+    </Li>
   );
 };
 
-export default Topic;
+export default TopicItem;
 
 const Li = styled.li`
   border: 1px solid #ddd;
