@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { removeTopic } from '../../store/topics';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { showSnackbar } from '../../store/snackbar';
+import WordRepository from './../../service/wordRepository';
+import { syncWords } from '../../store/words';
 
 interface TopicItemProps {
   name: string;
@@ -11,17 +13,33 @@ interface TopicItemProps {
   topicRepository: any;
 }
 
+const wordRepository = new WordRepository();
+
 const TopicItem: React.FC<TopicItemProps> = ({ name, id, topicRepository }) => {
-  const words = useAppSelector((state) => state.wordSlice).filter(
-    (word) => word.topic === name
-  );
+  const [wordsCount, setWordsCount] = useState(0);
+  const [memorizedCount, setMemorizedCount] = useState(0);
+
+  const allWords = useAppSelector((state) => state.wordSlice);
+
   const userId = useAppSelector((state) => state.userSlice.userId);
 
   const dispatch = useAppDispatch();
 
-  const memorizedWords = words.filter((word) => word.status === true);
+  // 이 부분 고쳐야 함
+  // 단어 개수 확인 안 됨
+  // topic detail 들어갔다 나와야 뜸
+  useEffect(() => {
+    const words = Object.keys(allWords).filter(
+      (key) => allWords[key].topic === id
+    );
+    setWordsCount(words.length);
+    const memorizedWords = Object.keys(allWords).filter(
+      (key) => allWords[key].status === true && allWords[key].topicId === id
+    );
+    setMemorizedCount(memorizedWords.length);
+  }, [allWords, id]);
 
-  const message = `전체 ${words.length} 개 중 ${memorizedWords.length}개 암기 완료`;
+  const message = `전체 ${wordsCount} 개 중 ${memorizedCount}개 암기 완료`;
 
   const handleDelete = (id: number) => {
     dispatch(removeTopic(id));

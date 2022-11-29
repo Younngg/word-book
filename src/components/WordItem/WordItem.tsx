@@ -3,17 +3,20 @@ import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircle } from '@fortawesome/free-regular-svg-icons';
 import { faX } from '@fortawesome/free-solid-svg-icons';
-import { useAppDispatch } from './../../store/hooks';
+import { useAppDispatch, useAppSelector } from './../../store/hooks';
 import { removeWord, updateWordStatus } from '../../store/words';
 import { showSnackbar } from '../../store/snackbar';
 
 interface WordItemProps {
   word: { word: string; mean: string; id: number; status: boolean };
+  wordRepository: any;
 }
 
-const WordItem: React.FC<WordItemProps> = ({ word }) => {
+const WordItem: React.FC<WordItemProps> = ({ word, wordRepository }) => {
   const [isCompleted, setIsCompleted] = useState(word.status);
   const [isShownMean, setIsShownMean] = useState(false);
+
+  const userId = useAppSelector((state) => state.userSlice.userId);
 
   const dispatch = useAppDispatch();
 
@@ -21,6 +24,7 @@ const WordItem: React.FC<WordItemProps> = ({ word }) => {
     dispatch(updateWordStatus({ id: word.id, status: isCompleted }));
   }, [dispatch, isCompleted, word.id]);
 
+  // 업데이트 구현해야함
   const handleClickComplete = () => {
     setIsCompleted(isCompleted ? false : true);
     dispatch(updateWordStatus({ id: word.id, status: isCompleted }));
@@ -32,6 +36,7 @@ const WordItem: React.FC<WordItemProps> = ({ word }) => {
 
   const handleDelete = (id: number) => {
     dispatch(removeWord(id));
+    wordRepository.removeWord(userId, word.id);
     dispatch(
       showSnackbar({
         message: `${word.word} 이(가) 삭제되었습니다.`,

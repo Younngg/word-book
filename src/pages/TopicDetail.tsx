@@ -2,15 +2,19 @@ import React from 'react';
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 import WordList from './../components/WordList/WordList';
+import WordRepository from './../service/wordRepository';
+
+const wordRepository = new WordRepository();
 
 const TopicDetail = () => {
   const location = useLocation();
   const topicName = location.state.name;
+  const topicId = location.state.id;
 
   return (
     <Container>
       <h2>{topicName}</h2>
-      <WordList topic={topicName} />
+      <WordList topic={topicId} wordRepository={wordRepository} />
     </Container>
   );
 };

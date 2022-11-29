@@ -1,39 +1,60 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ComponentProps } from 'react';
+import { ComponentProps, useEffect } from 'react';
 import { useRef } from 'react';
 import { useAppSelector } from '../../store/hooks';
-import { addWord } from '../../store/words';
+import { addWord, syncWords } from '../../store/words';
 import { useAppDispatch } from './../../store/hooks';
 import WordItem from './../WordItem/WordItem';
 import { showSnackbar } from '../../store/snackbar';
 
 interface WordListProps {
   topic: string;
+  wordRepository: any;
 }
 
-const WordList: React.FC<WordListProps> = ({ topic }) => {
-  const words = useAppSelector((state) => state.wordSlice).filter(
+const WordList: React.FC<WordListProps> = ({ topic, wordRepository }) => {
+  /* const words = useAppSelector((state) => state.wordSlice).filter(
     (word) => word.topic === topic
-  );
+  ); */
+  //const words = useAppSelector(state => )
+  const words = useAppSelector((state) => state.wordSlice);
+  const userId = useAppSelector((state) => state.userSlice.userId);
   const dispatch = useAppDispatch();
 
   const wordRef = useRef<HTMLInputElement>(null);
   const meanRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    if (!userId) {
+      return;
+    }
+    const stopSync = wordRepository.syncWords(userId, (words: any) => {
+      const result: any = {};
+      Object.entries(words).forEach(([key, value]) => {
+        if (words[key].topic === topic) {
+          result[key] = value;
+        }
+      });
+
+      dispatch(syncWords(result));
+    });
+    return () => stopSync();
+  }, [dispatch, topic, userId, wordRepository]);
+
   const handleSubmit: ComponentProps<'form'>['onSubmit'] = (e) => {
     e.preventDefault();
     if (wordRef.current && meanRef.current) {
       const word = wordRef.current.value;
-      dispatch(
-        addWord({
-          topic,
-          word,
-          mean: meanRef.current.value,
-          id: Date.now(),
-          status: false,
-        })
-      );
+      const newWord = {
+        topic,
+        word,
+        mean: meanRef.current.value,
+        id: Date.now(),
+        status: false,
+      };
+      dispatch(addWord(newWord));
+      wordRepository.saveWord(userId, newWord);
       dispatch(
         showSnackbar({
           message: `${word} 이(가) 추가되었습니다.`,
@@ -53,8 +74,14 @@ const WordList: React.FC<WordListProps> = ({ topic }) => {
         <button>Add</button>
       </Form>
       <Ul>
-        {words.map((word) => {
-          return <WordItem key={word.id} word={word} />;
+        {Object.keys(words).map((key) => {
+          return (
+            <WordItem
+              key={key}
+              word={words[key]}
+              wordRepository={wordRepository}
+            />
+          );
         })}
       </Ul>
     </>

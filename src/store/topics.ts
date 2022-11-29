@@ -19,8 +19,6 @@ export const topicSlice = createSlice({
           id: action.payload.id,
         },
       };
-      console.log(newTopics);
-
       return newTopics;
     },
     removeTopic: (state, action) => {
