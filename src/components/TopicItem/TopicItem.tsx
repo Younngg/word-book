@@ -4,22 +4,15 @@ import { Link } from 'react-router-dom';
 import { removeTopic } from '../../store/topics';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { showSnackbar } from '../../store/snackbar';
-import WordRepository from './../../service/wordRepository';
-import { syncWords } from '../../store/words';
 
 interface TopicItemProps {
-  name: string;
-  id: number;
-  topicRepository: any;
+  topic: any;
 }
 
-const wordRepository = new WordRepository();
+const TopicItem: React.FC<TopicItemProps> = ({ topic }) => {
+  const { topic: name, id, words } = topic;
 
-const TopicItem: React.FC<TopicItemProps> = ({ name, id, topicRepository }) => {
-  const [wordsCount, setWordsCount] = useState(0);
   const [memorizedCount, setMemorizedCount] = useState(0);
-
-  const allWords = useAppSelector((state) => state.wordSlice);
 
   const userId = useAppSelector((state) => state.userSlice.userId);
 
@@ -29,21 +22,18 @@ const TopicItem: React.FC<TopicItemProps> = ({ name, id, topicRepository }) => {
   // 단어 개수 확인 안 됨
   // topic detail 들어갔다 나와야 뜸
   useEffect(() => {
-    const words = Object.keys(allWords).filter(
-      (key) => allWords[key].topic === id
-    );
-    setWordsCount(words.length);
-    const memorizedWords = Object.keys(allWords).filter(
-      (key) => allWords[key].status === true && allWords[key].topicId === id
+    const memorizedWords = Object.keys(words).filter(
+      (key) => words[key].status === true && words[key].topicId === id
     );
     setMemorizedCount(memorizedWords.length);
-  }, [allWords, id]);
+  }, [words, id]);
 
-  const message = `전체 ${wordsCount} 개 중 ${memorizedCount}개 암기 완료`;
+  const message = `전체 ${
+    Object.keys(words).length
+  } 개 중 ${memorizedCount}개 암기 완료`;
 
-  const handleDelete = (id: number) => {
-    dispatch(removeTopic(id));
-    topicRepository.removeTopic(userId, id);
+  const handleDelete = (topicId: number) => {
+    dispatch(removeTopic({ userId, topicId }));
     dispatch(
       showSnackbar({
         message: `${name} 이(가) 삭제되었습니다.`,

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { ComponentProps, useEffect } from 'react';
 import { useRef } from 'react';
 import { useAppSelector } from '../../store/hooks';
-import { addWord, syncWords } from '../../store/words';
+import { addWord, saveWords, syncWords } from '../../store/words';
 import { useAppDispatch } from './../../store/hooks';
 import WordItem from './../WordItem/WordItem';
 import { showSnackbar } from '../../store/snackbar';
@@ -25,39 +25,39 @@ const WordList: React.FC<WordListProps> = ({ topic, wordRepository }) => {
   const wordRef = useRef<HTMLInputElement>(null);
   const meanRef = useRef<HTMLInputElement>(null);
 
+  console.log(topic);
+
   useEffect(() => {
     if (!userId) {
       return;
     }
-    const stopSync = wordRepository.syncWords(userId, (words: any) => {
-      const result: any = {};
-      Object.entries(words).forEach(([key, value]) => {
-        if (words[key].topic === topic) {
-          result[key] = value;
-        }
-      });
-
-      dispatch(syncWords(result));
-    });
-    return () => stopSync();
-  }, [dispatch, topic, userId, wordRepository]);
+    dispatch(
+      syncWords({
+        userId,
+        topicId: topic,
+        onUpdate: (words: any) => {
+          dispatch(saveWords(words));
+        },
+      })
+    );
+  }, [dispatch, topic, userId]);
 
   const handleSubmit: ComponentProps<'form'>['onSubmit'] = (e) => {
     e.preventDefault();
     if (wordRef.current && meanRef.current) {
-      const word = wordRef.current.value;
+      const wordValue = wordRef.current.value;
       const newWord = {
         topic,
-        word,
+        word: wordValue,
         mean: meanRef.current.value,
         id: Date.now(),
         status: false,
       };
-      dispatch(addWord(newWord));
-      wordRepository.saveWord(userId, newWord);
+
+      dispatch(addWord({ userId, word: newWord }));
       dispatch(
         showSnackbar({
-          message: `${word} 이(가) 추가되었습니다.`,
+          message: `${wordValue} 이(가) 추가되었습니다.`,
           color: 'green',
         })
       );

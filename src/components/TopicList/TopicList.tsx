@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useAppSelector } from '../../store/hooks';
-import { syncTopics } from '../../store/topics';
 import TopicItem from '../TopicItem/TopicItem';
 import { useAppDispatch } from './../../store/hooks';
+import { offSyncTopics, saveTopics, syncTopics } from './../../store/topics';
 
-const TopicList: React.FC<any> = ({ topicRepository }) => {
+const TopicList = () => {
   const topics = useAppSelector((state) => state.topicSlice);
 
   const dispatch = useAppDispatch();
@@ -15,23 +15,24 @@ const TopicList: React.FC<any> = ({ topicRepository }) => {
     if (!userId) {
       return;
     }
-    const stopSync = topicRepository.syncTopics(userId, (topics: any) =>
-      dispatch(syncTopics(topics))
+    dispatch(
+      syncTopics({
+        userId,
+        onUpdate: (topics: any) => {
+          dispatch(saveTopics(topics));
+        },
+      })
     );
-    return () => stopSync();
-  }, [dispatch, topicRepository, userId]);
+
+    return () => {
+      dispatch(offSyncTopics(userId));
+    };
+  }, [dispatch, userId]);
 
   return (
     <Ul>
       {Object.keys(topics).map((key) => {
-        return (
-          <TopicItem
-            key={key}
-            name={topics[key].topic}
-            id={topics[key].id}
-            topicRepository={topicRepository}
-          />
-        );
+        return <TopicItem key={key} topic={topics[key]} />;
       })}
     </Ul>
   );

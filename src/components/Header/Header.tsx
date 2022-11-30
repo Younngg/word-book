@@ -1,36 +1,32 @@
 import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import AuthService from './../../service/authService';
-import { useDispatch } from 'react-redux';
-import { loginUser, logoutUser } from '../../store/user';
+import { logoutUser, saveUser } from '../../store/user';
 import { useAppSelector } from '../../store/hooks';
-
-const authService = new AuthService();
+import { useAppDispatch } from './../../store/hooks';
+import { onAuthChange } from './../../store/user';
 
 const Header = () => {
   const navigate = useNavigate();
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const userId = useAppSelector((state) => state.userSlice);
 
-  console.log(userId.userId);
+  useEffect(() => {
+    dispatch(
+      onAuthChange((user: any) => {
+        if (!user) {
+          navigate('/');
+        } else {
+          dispatch(saveUser(user.uid));
+        }
+      })
+    );
+  }, [dispatch, navigate]);
 
   const onLogout = () => {
-    authService.logout();
     dispatch(logoutUser());
   };
-
-  useEffect(() => {
-    authService.onAuthChange((user: any) => {
-      if (user) {
-        dispatch(loginUser(user.uid));
-      } else {
-        dispatch(logoutUser());
-        navigate('/');
-      }
-    });
-  }, [dispatch, navigate]);
 
   return (
     <HeaderDiv>

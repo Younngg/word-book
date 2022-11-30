@@ -11,16 +11,20 @@ class TopicRepository {
     const topicsRef = ref(this.db, `${userId}/topics`);
     onValue(topicsRef, (snapshot) => {
       const data = snapshot.val();
-      data && onUpdate(data);
+      data ? onUpdate(data) : onUpdate({});
     });
-    return () => off(topicsRef);
   }
 
-  saveTopic(userId: string, topic: any) {
+  offSyncTopics(userId: string) {
+    const topicsRef = ref(this.db, `${userId}/topics`);
+    off(topicsRef);
+  }
+
+  saveTopic(userId: any, topic: any) {
     set(ref(this.db, `${userId}/topics/${topic.id}`), topic);
   }
 
-  removeTopic(userId: string, id: any) {
+  removeTopic(userId: any, id: any) {
     remove(ref(this.db, `${userId}/topics/${id}`));
   }
 }

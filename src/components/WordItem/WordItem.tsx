@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircle } from '@fortawesome/free-regular-svg-icons';
 import { faX } from '@fortawesome/free-solid-svg-icons';
 import { useAppDispatch, useAppSelector } from './../../store/hooks';
-import { removeWord, updateWordStatus } from '../../store/words';
+import { removeWord } from '../../store/words';
 import { showSnackbar } from '../../store/snackbar';
 
 interface WordItemProps {
@@ -21,22 +21,21 @@ const WordItem: React.FC<WordItemProps> = ({ word, wordRepository }) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(updateWordStatus({ id: word.id, status: isCompleted }));
+    //dispatch(updateWordStatus({ id: word.id, status: isCompleted }));
   }, [dispatch, isCompleted, word.id]);
 
   // 업데이트 구현해야함
   const handleClickComplete = () => {
     setIsCompleted(isCompleted ? false : true);
-    dispatch(updateWordStatus({ id: word.id, status: isCompleted }));
+    //dispatch(updateWordStatus({ id: word.id, status: isCompleted }));
   };
 
   const handleShowMean = () => {
     setIsShownMean(isShownMean ? false : true);
   };
 
-  const handleDelete = (id: number) => {
-    dispatch(removeWord(id));
-    wordRepository.removeWord(userId, word.id);
+  const handleDelete = () => {
+    dispatch(removeWord({ userId, word }));
     dispatch(
       showSnackbar({
         message: `${word.word} 이(가) 삭제되었습니다.`,
@@ -71,7 +70,7 @@ const WordItem: React.FC<WordItemProps> = ({ word, wordRepository }) => {
         </CompleteButton>
         <DeleteButton
           onClick={() => {
-            handleDelete(word.id);
+            handleDelete();
           }}
         >
           DEL

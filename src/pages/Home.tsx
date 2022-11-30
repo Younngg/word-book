@@ -2,17 +2,14 @@ import React from 'react';
 import styled from 'styled-components';
 import TopicList from './../components/TopicList/TopicList';
 import TopicAddForm from './../components/TopicAddForm/TopicAddForm';
-import TopicRepository from './../service/topicRepository';
-
-const topicRepository = new TopicRepository();
 
 const Home = () => {
   return (
     <>
       <Container>
         <h2>Topics</h2>
-        <TopicAddForm topicRepository={topicRepository} />
-        <TopicList topicRepository={topicRepository} />
+        <TopicAddForm />
+        <TopicList />
       </Container>
     </>
   );

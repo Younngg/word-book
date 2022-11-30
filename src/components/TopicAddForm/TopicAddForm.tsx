@@ -5,7 +5,7 @@ import { addTopic } from '../../store/topics';
 import { useAppDispatch } from './../../store/hooks';
 import { showSnackbar } from './../../store/snackbar';
 
-const TopicAddForm: React.FC<any> = ({ topicRepository }) => {
+const TopicAddForm = () => {
   const dispatch = useAppDispatch();
   const userId = useAppSelector((state) => state.userSlice.userId);
 
@@ -14,13 +14,12 @@ const TopicAddForm: React.FC<any> = ({ topicRepository }) => {
   const handleSubmit: ComponentProps<'form'>['onSubmit'] = (e) => {
     e.preventDefault();
     if (topicRef.current) {
-      const topic = topicRef.current.value;
-      const id = Date.now();
-      topicRepository.saveTopic(userId, { topic, id });
-      dispatch(addTopic({ topic, id }));
+      const topic = { topic: topicRef.current.value, id: Date.now() };
+
+      dispatch(addTopic({ userId, topic }));
       dispatch(
         showSnackbar({
-          message: `${topic} 이(가) 추가되었습니다.`,
+          message: `${topic.topic} 이(가) 추가되었습니다.`,
           color: 'green',
         })
       );

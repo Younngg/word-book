@@ -7,21 +7,25 @@ class WordRepository {
     this.db = getDatabase(firebaseApp);
   }
 
-  syncWords(userId: string, onUpdate: any) {
-    const wordsRef = ref(this.db, `${userId}/words`);
+  syncWords(userId: string, topicId: any, onUpdate: any) {
+    const wordsRef = ref(this.db, `${userId}/topics/${topicId}/words`);
     onValue(wordsRef, (snapshot) => {
       const data = snapshot.val();
-      data && onUpdate(data);
+      data ? onUpdate(data) : onUpdate({});
     });
-    return () => off(wordsRef);
+  }
+
+  offSyncWords(userId: string, topicId: any) {
+    const wordsRef = ref(this.db, `${userId}/topics/${topicId}/words`);
+    off(wordsRef);
   }
 
   saveWord(userId: string, word: any) {
-    set(ref(this.db, `${userId}/words/${word.id}`), word);
+    set(ref(this.db, `${userId}/topics/${word.topic}/words/${word.id}`), word);
   }
 
-  removeWord(userId: string, id: any) {
-    remove(ref(this.db, `${userId}/words/${id}`));
+  removeWord(userId: string, word: any) {
+    remove(ref(this.db, `${userId}/topics/${word.topic}/words/${word.id}`));
   }
 }
 
